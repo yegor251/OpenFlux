@@ -91,9 +91,10 @@ challenge is echoed, so old traffic replayed from a carrier (anyone with
 access to a document sees the ciphertext) cannot displace it. An exit
 therefore serves one active client at a time. A client whose exit went
 silent on every transport starts a new handshake on its own, within about a
-minute. Existing iOS builds have no negotiation setting and must use an
-exit without `--negotiate`. Their UDP switch remains manual. No claim of
-device-level QUIC validation is made.
+minute. The full recovery contract - detection bounds, backoff, platform
+notes: [reconnect.md](reconnect.md). Existing iOS builds have no negotiation
+setting and must use an exit without `--negotiate`. Their UDP switch remains
+manual. No claim of device-level QUIC validation is made.
 
 Classic (pre-Session) peers still interoperate - a classic setup with a key
 (`--transport=X`, the apps' classic profiles) runs a Session and speaks
