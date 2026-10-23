@@ -3,6 +3,27 @@
 All notable changes to the OpenFlux core. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+### Fixed
+
+- **A client survives a node restart that lands in the session's first seconds.** Keepalive support was only detected on the
+  first `LinkPing`/pong exchange, which the keepalive tick schedules; a node restarting before that left the client helloing
+  into a session the new node would never answer, with no reset armed and no way out but a client restart. The client now
+  pings for its first pong as soon as the handshake completes, and a session that has not been keepalived yet still gives up
+  on a silent exit after 6 link timeouts instead of never.
+- **A lost first hello reply no longer mutes the node.** Only the first initial hello was ever answered; a client repeating
+  it (the reply lost on the way) got silence. An initial hello is now answered every time it is offered while the session is
+  open, and the receive chain goes up before a carrier starts, so the peer's first frame on a fresh node is no longer
+  dropped in the gap between listener and callback.
+
+### Added
+
+- **Session diagnostics in the IPC status** for the app's "connected but no internet" screen: `established`, `last_heard_ms`
+  and a per-carrier `carriers[]` (connected / heard / last-heard) - a user can now tell a dead node from a dead network from
+  a silent data plane, states that all look alike as "connected, nothing loads". `Session.Diagnostics()` is the in-process
+  form.
+
 ## [0.15.1] / node-v1.8.1 - 2026-10-22 (OpenFluxTeam/OpenFlux)
 
 node-install.sh installs **node-v1.8.1**. Both fixes are on the exit: update the nodes.
